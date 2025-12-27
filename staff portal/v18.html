@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Marks Portal - React</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="/_sdk/data_sdk.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        box-sizing: border-box;
+        font-family: "DM Sans", sans-serif;
+      }
+
+      :root {
+        --primary: #0f172a;
+        --secondary: #1e3a5f;
+        --accent: #3b82f6;
+        --surface: #f8fafc;
+        --text: #1e293b;
+      }
+
+      .sidebar-item {
+        transition: all 0.2s ease;
+      }
+
+      .sidebar-item:hover,
+      .sidebar-item.active {
+        background: rgba(59, 130, 246, 0.15);
+        border-left: 3px solid var(--accent);
+      }
+
+      .card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+      }
+
+      .input-field {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        transition: all 0.2s;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .input-field:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: #f1f5f9;
+        color: var(--text);
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn-secondary:hover {
+        background: #e2e8f0;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+      }
+
+      .badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .badge-success {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .badge-warning {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-danger {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .badge-info {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .data-table th {
+        background: #f8fafc;
+        padding: 14px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: #64748b;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .data-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .data-table tr:hover {
+        background: #f8fafc;
+      }
+
+      .excel-grid {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .excel-grid table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .excel-grid th {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+        color: white;
+        padding: 12px 16px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 13px;
+        border: 1px solid #334155;
+      }
+
+      .excel-grid td {
+        padding: 0;
+        border: 1px solid #e2e8f0;
+      }
+
+      .excel-grid input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        outline: none;
+        text-align: center;
+        font-size: 14px;
+        background: transparent;
+        transition: all 0.2s;
+      }
+
+      .excel-grid input:focus {
+        background: #eff6ff;
+        box-shadow: inset 0 0 0 2px #3b82f6;
+      }
+
+      .excel-grid input.name-input {
+        text-align: left;
+        padding-left: 16px;
+      }
+
+      .excel-grid .row-number {
+        background: #f8fafc;
+        font-weight: 600;
+        color: #64748b;
+        text-align: center;
+        padding: 12px;
+        min-width: 50px;
+      }
+
+      .excel-grid .total-cell {
+        background: #f0fdf4;
+        font-weight: 600;
+        text-align: center;
+        padding: 12px;
+        color: #166534;
+      }
+
+      .excel-grid .percentage-cell {
+        background: #eff6ff;
+        font-weight: 700;
+        text-align: center;
+        padding: 12px;
+        color: #1e40af;
+      }
+
+      .excel-grid tr.current-row {
+        background: #fef3c7;
+      }
+
+      .excel-grid tr.saved-row {
+        background: #f0fdf4;
+      }
+
+      .excel-grid tr.saved-row input {
+        background: #f0fdf4;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 16px 24px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+      }
+
+      .toast-success {
+        background: #22c55e;
+      }
+      .toast-error {
+        background: #ef4444;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease;
+      }
+
+      .loading-spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .subject-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #e2e8f0;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+      }
+
+      .subject-tag button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #64748b;
+        padding: 0;
+        line-height: 1;
+      }
+
+      .subject-tag button:hover {
+        color: #ef4444;
+      }
+
+      .setup-panel {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 2px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 32px;
+      }
+
+      .confirm-inline {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .confirm-btn {
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+      }
+
+      .confirm-yes {
+        background: #ef4444;
+        color: white;
+      }
+
+      .confirm-no {
+        background: #e2e8f0;
+        color: #64748b;
+      }
+    </style>
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
+  </head>
+  <body class="h-full bg-gray-50">
+    <div id="root" class="h-full"></div>
+    <script type="text/babel">
+      const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+      // Utility Functions
+      const calculateGrade = (percentage) => {
+        if (percentage >= 90) return "A+";
+        if (percentage >= 80) return "A";
+        if (percentage >= 70) return "B+";
+        if (percentage >= 60) return "B";
+        if (percentage >= 50) return "C";
+        if (percentage >= 40) return "D";
+        return "F";
+      };
+
+      const formatDate = () => {
+        return new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      };
+
+      // Toast Component
+      const Toast = ({ message, type, onClose }) => {
+        useEffect(() => {
+          const timer = setTimeout(onClose, 3000);
+          return () => clearTimeout(timer);
+        }, [onClose]);
+
+        return (
+          <div className={`toast toast-${type}`}>
+            <span>{message}</span>
+            <button onClick={onClose} className="ml-4 hover:opacity-70">
+              ×
+            </button>
+          </div>
+        );
+      };
+
+      // Sidebar Component
+      const Sidebar = ({ activeSection, setActiveSection, config }) => {
+        const menuItems = [
+          {
+            id: "dashboard",
+            label: "Dashboard",
+            icon: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+          },
+          {
+            id: "students",
+            label: "View Students",
+            icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z",
+          },
+          {
+            id: "marks-entry",
+            label: "Enter Marks",
+            icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+          },
+          {
+            id: "view-marks",
+            label: "View Marks",
+            icon: "M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z",
+          },
+        ];
+
+        return (
+          <aside
+            className="w-64 flex-shrink-0 flex flex-col"
+            style={{
+              background: "linear-gradient(180deg, #0f172a 0%, #1e3a5f 100%)",
+            }}
+          >
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-1">
+                <svg
+                  className="w-8 h-8 text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 14l9-5-9-5-9 5 9 5z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                  />
+                </svg>
+                <h1 className="text-xl font-bold text-white">
+                  {config.portal_title}
+                </h1>
+              </div>
+              <p className="text-blue-300 text-sm">{config.department_name}</p>
+            </div>
+
+            <nav className="flex-1 mt-4 px-3">
+              {menuItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveSection(item.id)}
+                  className={`sidebar-item w-full flex items-center gap-3 px-4 py-3 text-white rounded-lg mb-1 ${
+                    activeSection === item.id ? "active" : ""
+                  }`}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d={item.icon}
+                    />
+                  </svg>
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            <div className="p-4 border-t border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+                  {config.staff_name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-white font-medium text-sm">
+                    {config.staff_name}
+                  </p>
+                  <p className="text-blue-300 text-xs">Faculty</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        );
+      };
+
+      // Header Component
+      const Header = ({ title }) => (
+        <header className="bg-white shadow-sm px-8 py-4 flex items-center justify-between flex-shrink-0">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
+            <p className="text-gray-500 text-sm">{formatDate()}</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 rounded-full hover:bg-gray-100 relative">
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+          </div>
+        </header>
+      );
+
+      // Dashboard Component
+      const Dashboard = ({ marksData }) => {
+        const stats = useMemo(() => {
+          const total = marksData.length;
+          const passed = marksData.filter((m) => m.percentage >= 40).length;
+          const avg =
+            total > 0
+              ? Math.round(
+                  marksData.reduce((s, m) => s + (m.percentage || 0), 0) / total
+                )
+              : 0;
+          const today = new Date().toDateString();
+          const todayEntries = marksData.filter(
+            (m) => new Date(m.timestamp).toDateString() === today
+          ).length;
+
+          const grades = { "A+": 0, A: 0, "B+": 0, B: 0, C: 0, D: 0, F: 0 };
+          marksData.forEach((m) => {
+            if (grades[m.grade] !== undefined) grades[m.grade]++;
+          });
+
+          return { total, passed, avg, todayEntries, grades };
+        }, [marksData]);
+
+        const recentEntries = useMemo(
+          () => marksData.slice(-5).reverse(),
+          [marksData]
+        );
+
+        return (
+          <div className="animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="stat-card rounded-2xl p-6 text-white">
+                <div className="flex items-center justify-between mb-4">
+                  <svg
+                    className="w-10 h-10 opacity-80"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                  <span className="text-4xl font-bold">{stats.total}</span>
+                </div>
+                <p className="text-blue-200">Total Students</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-emerald-600 to-emerald-400 rounded-2xl p-6 text-white">
+                <div className="flex items-center justify-between mb-4">
+                  <svg
+                    className="w-10 h-10 opacity-80"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="text-4xl font-bold">{stats.passed}</span>
+                </div>
+                <p className="text-emerald-100">Students Passed</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-600 to-purple-400 rounded-2xl p-6 text-white">
+                <div className="flex items-center justify-between mb-4">
+                  <svg
+                    className="w-10 h-10 opacity-80"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
+                    />
+                  </svg>
+                  <span className="text-4xl font-bold">{stats.avg}%</span>
+                </div>
+                <p className="text-purple-100">Average Score</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-amber-500 to-orange-400 rounded-2xl p-6 text-white">
+                <div className="flex items-center justify-between mb-4">
+                  <svg
+                    className="w-10 h-10 opacity-80"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="text-4xl font-bold">
+                    {stats.todayEntries}
+                  </span>
+                </div>
+                <p className="text-amber-100">Today's Entries</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="card p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-blue-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                  </svg>
+                  Recent Entries
+                </h3>
+                <div className="space-y-3">
+                  {recentEntries.length > 0 ? (
+                    recentEntries.map((m, i) => (
+                      <div
+                        key={m.__backendId || i}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                            <span className="font-semibold text-blue-600">
+                              {m.student_name.charAt(0)}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">
+                              {m.student_name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              Roll: {m.roll_no} • {m.semester}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p
+                            className={`font-bold ${
+                              m.percentage >= 40
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {m.percentage}%
+                          </p>
+                          <p className="text-xs text-gray-500">{m.grade}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-8">
+                      No recent entries
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="card p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                  Grade Distribution
+                </h3>
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <p className="text-2xl font-bold text-green-600">
+                      {stats.grades["A+"] + stats.grades["A"]}
+                    </p>
+                    <p className="text-sm text-gray-500">A+/A</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <p className="text-2xl font-bold text-blue-600">
+                      {stats.grades["B+"] + stats.grades["B"]}
+                    </p>
+                    <p className="text-sm text-gray-500">B+/B</p>
+                  </div>
+                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                    <p className="text-2xl font-bold text-yellow-600">
+                      {stats.grades["C"] + stats.grades["D"]}
+                    </p>
+                    <p className="text-sm text-gray-500">C/D</p>
+                  </div>
+                  <div className="bg-red-50 rounded-lg p-4 text-center">
+                    <p className="text-2xl font-bold text-red-600">
+                      {stats.grades["F"]}
+                    </p>
+                    <p className="text-sm text-gray-500">F</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // View Students Component
+      const ViewStudents = ({ marksData }) => {
+        const [yearFilter, setYearFilter] = useState("all");
+        const [semesterFilter, setSemesterFilter] = useState("all");
+        const [searchTerm, setSearchTerm] = useState("");
+
+        const years = useMemo(
+          () =>
+            [...new Set(marksData.map((m) => m.academic_year).filter(Boolean))]
+              .sort()
+              .reverse(),
+          [marksData]
+        );
+
+        const filteredData = useMemo(() => {
+          let filtered = marksData;
+          if (yearFilter !== "all")
+            filtered = filtered.filter((m) => m.academic_year === yearFilter);
+          if (semesterFilter !== "all")
+            filtered = filtered.filter((m) => m.semester === semesterFilter);
+          if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filtered = filtered.filter(
+              (m) =>
+                m.student_name.toLowerCase().includes(term) ||
+                m.roll_no.toLowerCase().includes(term)
+            );
+          }
+          return filtered;
+        }, [marksData, yearFilter, semesterFilter, searchTerm]);
+
+        return (
+          <div className="card p-6 animate-fade-in">
+            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+              <h3 className="text-lg font-semibold">
+                Students by Academic Year
+              </h3>
+              <div className="flex items-center gap-4">
+                <select
+                  value={yearFilter}
+                  onChange={(e) => setYearFilter(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="all">All Years</option>
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={semesterFilter}
+                  onChange={(e) => setSemesterFilter(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="all">All Semesters</option>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                    <option key={s} value={`Semester ${s}`}>
+                      Semester {s}
+                    </option>
+                  ))}
+                </select>
+                <div className="relative">
+                  <svg
+                    className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="input-field pl-10"
+                    placeholder="Search students..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {filteredData.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Roll No</th>
+                      <th>Name</th>
+                      <th>Academic Year</th>
+                      <th>Semester</th>
+                      <th>Total Marks</th>
+                      <th>Percentage</th>
+                      <th>Grade</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.map((m, i) => (
+                      <tr key={m.__backendId || i}>
+                        <td className="font-mono font-medium">{m.roll_no}</td>
+                        <td className="font-medium">{m.student_name}</td>
+                        <td>
+                          <span className="badge badge-info">
+                            {m.academic_year || "-"}
+                          </span>
+                        </td>
+                        <td>{m.semester}</td>
+                        <td className="font-semibold">
+                          {m.total_obtained}/{m.total_max}
+                        </td>
+                        <td
+                          className={`font-bold ${
+                            m.percentage >= 40
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {m.percentage}%
+                        </td>
+                        <td>
+                          <span
+                            className={`badge ${
+                              m.grade === "F"
+                                ? "badge-danger"
+                                : m.grade.includes("A")
+                                ? "badge-success"
+                                : "badge-info"
+                            }`}
+                          >
+                            {m.grade}
+                          </span>
+                        </td>
+                        <td>
+                          {m.percentage >= 40 ? (
+                            <span className="badge badge-success">PASS</span>
+                          ) : (
+                            <span className="badge badge-danger">FAIL</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-8">
+                No students found. Add marks to see students here.
+              </p>
+            )}
+          </div>
+        );
+      };
+
+      // Excel Row Component
+      const ExcelRow = ({
+        row,
+        rowIndex,
+        subjects,
+        maxMarks,
+        onUpdateRow,
+        onSaveRow,
+        onDeleteRow,
+        inputRefs,
+      }) => {
+        const calculateTotals = useCallback(() => {
+          const totalObtained = row.marks.reduce(
+            (sum, m) => sum + (parseInt(m) || 0),
+            0
+          );
+          const totalMax = subjects.length * maxMarks;
+          const percentage =
+            totalMax > 0 ? Math.round((totalObtained / totalMax) * 100) : 0;
+          const grade = calculateGrade(percentage);
+          return { totalObtained, totalMax, percentage, grade };
+        }, [row.marks, subjects.length, maxMarks]);
+
+        const totals = calculateTotals();
+
+        const handleKeyDown = (e, fieldType, subjectIndex = -1) => {
+          if (e.key === "Enter" || e.key === "Tab") {
+            e.preventDefault();
+
+            if (
+              fieldType === "subject" &&
+              subjectIndex === subjects.length - 1
+            ) {
+              onSaveRow(rowIndex);
+            } else {
+              // Move to next input
+              const currentRefKey =
+                fieldType === "roll"
+                  ? `${rowIndex}-roll`
+                  : fieldType === "name"
+                  ? `${rowIndex}-name`
+                  : `${rowIndex}-subject-${subjectIndex}`;
+
+              const allKeys = [
+                `${rowIndex}-roll`,
+                `${rowIndex}-name`,
+                ...subjects.map((_, i) => `${rowIndex}-subject-${i}`),
+              ];
+
+              const currentIndex = allKeys.indexOf(currentRefKey);
+              const nextKey = allKeys[currentIndex + 1];
+
+              if (nextKey && inputRefs.current[nextKey]) {
+                inputRefs.current[nextKey].focus();
+              }
+            }
+          }
+        };
+
+        return (
+          <tr className={row.saved ? "saved-row" : "current-row"}>
+            <td className="row-number">{rowIndex + 1}</td>
+            <td>
+              <input
+                ref={(el) => (inputRefs.current[`${rowIndex}-roll`] = el)}
+                type="text"
+                value={row.rollNo}
+                onChange={(e) =>
+                  onUpdateRow(rowIndex, "rollNo", e.target.value)
+                }
+                onKeyDown={(e) => handleKeyDown(e, "roll")}
+                placeholder="Roll No"
+                disabled={row.saved}
+              />
+            </td>
+            <td>
+              <input
+                ref={(el) => (inputRefs.current[`${rowIndex}-name`] = el)}
+                type="text"
+                className="name-input"
+                value={row.name}
+                onChange={(e) => onUpdateRow(rowIndex, "name", e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, "name")}
+                placeholder="Student Name"
+                disabled={row.saved}
+              />
+            </td>
+            {subjects.map((_, i) => (
+              <td key={i}>
+                <input
+                  ref={(el) =>
+                    (inputRefs.current[`${rowIndex}-subject-${i}`] = el)
+                  }
+                  type="number"
+                  min="0"
+                  max={maxMarks}
+                  value={row.marks[i] || ""}
+                  onChange={(e) => {
+                    const newMarks = [...row.marks];
+                    newMarks[i] = e.target.value;
+                    onUpdateRow(rowIndex, "marks", newMarks);
+                  }}
+                  onKeyDown={(e) => handleKeyDown(e, "subject", i)}
+                  placeholder="0"
+                  disabled={row.saved}
+                />
+              </td>
+            ))}
+            <td className="total-cell">
+              {totals.totalObtained}/{totals.totalMax}
+            </td>
+            <td className="percentage-cell">{totals.percentage}%</td>
+            <td
+              className={`grade-cell ${
+                totals.grade === "F"
+                  ? "text-red-600"
+                  : totals.grade.includes("A")
+                  ? "text-green-600"
+                  : "text-blue-600"
+              }`}
+            >
+              {totals.grade}
+            </td>
+            <td style={{ textAlign: "center", padding: "8px" }}>
+              {!row.saved && (
+                <>
+                  <button
+                    onClick={() => onSaveRow(rowIndex)}
+                    className="text-green-500 hover:text-green-700 p-1"
+                    title="Save"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => onDeleteRow(rowIndex)}
+                    className="text-red-500 hover:text-red-700 p-1"
+                    title="Delete"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </>
+              )}
+            </td>
+          </tr>
+        );
+      };
+
+      // Marks Entry Component
+      const MarksEntry = ({ marksData, showToast }) => {
+        const [setup, setSetup] = useState({
+          year: "",
+          semester: "",
+          maxMarks: 100,
+        });
+        const [subjects, setSubjects] = useState([]);
+        const [newSubject, setNewSubject] = useState("");
+        const [isSetupDone, setIsSetupDone] = useState(false);
+        const [rows, setRows] = useState([]);
+        const [isLoading, setIsLoading] = useState(false);
+        const inputRefs = useRef({});
+
+        const addSubject = () => {
+          const name = newSubject.trim();
+          if (!name) {
+            showToast("Please enter a subject name", "error");
+            return;
+          }
+          if (subjects.includes(name)) {
+            showToast("Subject already added", "error");
+            return;
+          }
+          setSubjects([...subjects, name]);
+          setNewSubject("");
+        };
+
+        const removeSubject = (index) => {
+          setSubjects(subjects.filter((_, i) => i !== index));
+        };
+
+        const startMarksEntry = () => {
+          if (!setup.year || !setup.semester) {
+            showToast("Please select academic year and semester", "error");
+            return;
+          }
+          if (subjects.length === 0) {
+            showToast("Please add at least one subject", "error");
+            return;
+          }
+          setIsSetupDone(true);
+          setRows([
+            {
+              rollNo: "",
+              name: "",
+              marks: Array(subjects.length).fill(""),
+              saved: false,
+            },
+          ]);
+
+          setTimeout(() => {
+            if (inputRefs.current["0-roll"]) {
+              inputRefs.current["0-roll"].focus();
+            }
+          }, 100);
+        };
+
+        const updateRow = (index, field, value) => {
+          setRows(
+            rows.map((row, i) =>
+              i === index ? { ...row, [field]: value } : row
+            )
+          );
+        };
+
+        const addNewRow = () => {
+          setRows([
+            ...rows,
+            {
+              rollNo: "",
+              name: "",
+              marks: Array(subjects.length).fill(""),
+              saved: false,
+            },
+          ]);
+
+          setTimeout(() => {
+            const newIndex = rows.length;
+            if (inputRefs.current[`${newIndex}-roll`]) {
+              inputRefs.current[`${newIndex}-roll`].focus();
+            }
+          }, 100);
+        };
+
+        const saveRow = async (index) => {
+          const row = rows[index];
+          if (!row.rollNo.trim() || !row.name.trim()) {
+            showToast("Please enter Roll No and Student Name", "error");
+            return;
+          }
+
+          if (marksData.length >= 999) {
+            showToast("Maximum record limit reached (999)", "error");
+            return;
+          }
+
+          setIsLoading(true);
+
+          const subjectsData = subjects.map((name, i) => ({
+            name,
+            marks: parseInt(row.marks[i]) || 0,
+            max: setup.maxMarks,
+          }));
+
+          const totalObtained = subjectsData.reduce(
+            (sum, s) => sum + s.marks,
+            0
+          );
+          const totalMax = subjects.length * setup.maxMarks;
+          const percentage =
+            totalMax > 0 ? Math.round((totalObtained / totalMax) * 100) : 0;
+          const grade = calculateGrade(percentage);
+
+          try {
+            const result = await window.dataSdk.create({
+              type: "marks",
+              academic_year: setup.year,
+              semester: setup.semester,
+              roll_no: row.rollNo,
+              student_name: row.name,
+              subjects: JSON.stringify(subjectsData),
+              total_obtained: totalObtained,
+              total_max: totalMax,
+              percentage,
+              grade,
+              status: percentage >= 40 ? "Pass" : "Fail",
+              timestamp: new Date().toISOString(),
+            });
+
+            if (result.isOk) {
+              setRows(
+                rows.map((r, i) => (i === index ? { ...r, saved: true } : r))
+              );
+              showToast(`Saved: ${row.name} (Roll: ${row.rollNo})`);
+              addNewRow();
+            } else {
+              showToast("Failed to save", "error");
+            }
+          } catch (err) {
+            showToast("An error occurred", "error");
+          } finally {
+            setIsLoading(false);
+          }
+        };
+
+        const deleteRow = (index) => {
+          setRows(rows.filter((_, i) => i !== index));
+        };
+
+        const saveAllRows = async () => {
+          for (let i = 0; i < rows.length; i++) {
+            if (
+              !rows[i].saved &&
+              rows[i].rollNo.trim() &&
+              rows[i].name.trim()
+            ) {
+              await saveRow(i);
+            }
+          }
+          showToast("All valid rows saved");
+        };
+
+        const downloadExcel = () => {
+          const savedRows = rows.filter((r) => r.saved);
+          if (savedRows.length === 0) {
+            showToast("No saved entries to download", "error");
+            return;
+          }
+
+          let csv =
+            "Roll No,Student Name," +
+            subjects.join(",") +
+            ",Total,Percentage,Grade\n";
+          savedRows.forEach((row) => {
+            const totalObtained = row.marks.reduce(
+              (sum, m) => sum + (parseInt(m) || 0),
+              0
+            );
+            const totalMax = subjects.length * setup.maxMarks;
+            const percentage =
+              totalMax > 0 ? Math.round((totalObtained / totalMax) * 100) : 0;
+            const grade = calculateGrade(percentage);
+            csv += `${row.rollNo},${row.name},${row.marks.join(
+              ","
+            )},${totalObtained}/${totalMax},${percentage}%,${grade}\n`;
+          });
+
+          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `marks_${setup.semester.replace(" ", "_")}_${
+            setup.year
+          }.csv`;
+          link.click();
+          URL.revokeObjectURL(link.href);
+          showToast("Download started");
+        };
+
+        const resetSetup = () => {
+          setIsSetupDone(false);
+          setRows([]);
+        };
+
+        const savedCount = rows.filter((r) => r.saved).length;
+
+        if (!isSetupDone) {
+          return (
+            <div className="setup-panel mb-6 animate-fade-in">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                Class Setup
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Configure the class details once, then enter marks for all
+                students in an Excel-like grid.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Academic Year *
+                  </label>
+                  <select
+                    value={setup.year}
+                    onChange={(e) =>
+                      setSetup({ ...setup, year: e.target.value })
+                    }
+                    className="input-field"
+                  >
+                    <option value="">Select Year</option>
+                    {["2024-2025", "2023-2024", "2022-2023", "2021-2022"].map(
+                      (y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Semester *
+                  </label>
+                  <select
+                    value={setup.semester}
+                    onChange={(e) =>
+                      setSetup({ ...setup, semester: e.target.value })
+                    }
+                    className="input-field"
+                  >
+                    <option value="">Select Semester</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                      <option key={s} value={`Semester ${s}`}>
+                        Semester {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Max Marks per Subject
+                  </label>
+                  <input
+                    type="number"
+                    value={setup.maxMarks}
+                    onChange={(e) =>
+                      setSetup({
+                        ...setup,
+                        maxMarks: parseInt(e.target.value) || 50,
+                      })
+                    }
+                    className="input-field"
+                    min="1"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Subjects *
+                </label>
+                <div className="flex gap-2 mb-3">
+                  <input
+                    type="text"
+                    value={newSubject}
+                    onChange={(e) => setNewSubject(e.target.value)}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addSubject())
+                    }
+                    className="input-field flex-1"
+                    placeholder="Enter subject name and press Enter or click Add"
+                  />
+                  <button
+                    type="button"
+                    onClick={addSubject}
+                    className="btn-primary"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {subjects.length > 0 ? (
+                    subjects.map((s, i) => (
+                      <span key={i} className="subject-tag">
+                        {s}
+                        <button onClick={() => removeSubject(i)} title="Remove">
+                          ×
+                        </button>
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-sm">
+                      No subjects added yet
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={startMarksEntry}
+                className="btn-primary"
+              >
+                <span className="flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                  Start Marks Entry
+                </span>
+              </button>
+            </div>
+          );
+        }
+
+        return (
+          <div className="animate-fade-in">
+            <div className="card p-6 mb-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <svg
+                      className="w-5 h-5 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Marks Entry Sheet
+                  </h3>
+                  <p className="text-gray-500 text-sm mt-1">
+                    <strong>Year:</strong> {setup.year} |{" "}
+                    <strong>Semester:</strong> {setup.semester} |{" "}
+                    <strong>Subjects:</strong> {subjects.length}
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={downloadExcel} className="btn-success">
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                      Download Excel
+                    </span>
+                  </button>
+                  <button onClick={resetSetup} className="btn-secondary">
+                    Change Setup
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="card p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm text-gray-600">
+                  <strong>Tip:</strong> Enter Roll No and press{" "}
+                  <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">
+                    Enter
+                  </kbd>{" "}
+                  or{" "}
+                  <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">
+                    Tab
+                  </kbd>{" "}
+                  to move to next field. Press{" "}
+                  <kbd className="px-2 py-1 bg-gray-200 rounded text-xs">
+                    Enter
+                  </kbd>{" "}
+                  on the last subject to save and move to next student.
+                </p>
+                <span className="badge badge-info">
+                  {savedCount} saved / {rows.length} total
+                </span>
+              </div>
+
+              <div
+                className="excel-grid"
+                style={{ maxHeight: "500px", overflowY: "auto" }}
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th style={{ minWidth: "60px" }}>#</th>
+                      <th style={{ minWidth: "120px" }}>Roll No</th>
+                      <th style={{ minWidth: "200px" }}>Student Name</th>
+                      {subjects.map((s, i) => (
+                        <th key={i} style={{ minWidth: "100px" }}>
+                          {s}
+                          <br />
+                          <small>(Max: {setup.maxMarks})</small>
+                        </th>
+                      ))}
+                      <th style={{ minWidth: "100px" }}>Total</th>
+                      <th style={{ minWidth: "80px" }}>%</th>
+                      <th style={{ minWidth: "80px" }}>Grade</th>
+                      <th style={{ minWidth: "100px" }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, index) => (
+                      <ExcelRow
+                        key={index}
+                        row={row}
+                        rowIndex={index}
+                        subjects={subjects}
+                        maxMarks={setup.maxMarks}
+                        onUpdateRow={updateRow}
+                        onSaveRow={saveRow}
+                        onDeleteRow={deleteRow}
+                        inputRefs={inputRefs}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-4 flex justify-between items-center">
+                <button onClick={addNewRow} className="btn-secondary">
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 4v16m8-8H4"
+                      />
+                    </svg>
+                    Add Row
+                  </span>
+                </button>
+                <button
+                  onClick={saveAllRows}
+                  disabled={isLoading}
+                  className="btn-primary"
+                >
+                  <span className="flex items-center gap-2">
+                    {isLoading ? (
+                      <span className="loading-spinner"></span>
+                    ) : (
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                    Save All
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // View Marks Component
+      const ViewMarks = ({ marksData, showToast, onDelete }) => {
+        const [yearFilter, setYearFilter] = useState("all");
+        const [semesterFilter, setSemesterFilter] = useState("all");
+        const [searchTerm, setSearchTerm] = useState("");
+        const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+        const [isDeleting, setIsDeleting] = useState(false);
+
+        const years = useMemo(
+          () =>
+            [...new Set(marksData.map((m) => m.academic_year).filter(Boolean))]
+              .sort()
+              .reverse(),
+          [marksData]
+        );
+
+        const filteredData = useMemo(() => {
+          let filtered = marksData;
+          if (yearFilter !== "all")
+            filtered = filtered.filter((m) => m.academic_year === yearFilter);
+          if (semesterFilter !== "all")
+            filtered = filtered.filter((m) => m.semester === semesterFilter);
+          if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filtered = filtered.filter(
+              (m) =>
+                m.student_name.toLowerCase().includes(term) ||
+                m.roll_no.toLowerCase().includes(term)
+            );
+          }
+          return filtered;
+        }, [marksData, yearFilter, semesterFilter, searchTerm]);
+
+        const handleDelete = async (id) => {
+          const record = marksData.find((m) => m.__backendId === id);
+          if (!record || isDeleting) return;
+
+          setIsDeleting(true);
+          try {
+            const result = await window.dataSdk.delete(record);
+            if (result.isOk) {
+              showToast("Record deleted successfully");
+            } else {
+              showToast("Failed to delete record", "error");
+            }
+          } catch (err) {
+            showToast("An error occurred", "error");
+          } finally {
+            setIsDeleting(false);
+            setDeleteConfirmId(null);
+          }
+        };
+
+        const downloadAllMarks = () => {
+          if (marksData.length === 0) {
+            showToast("No data to export", "error");
+            return;
+          }
+
+          let csv =
+            "Roll No,Student Name,Academic Year,Semester,Total Obtained,Total Max,Percentage,Grade,Status\n";
+          marksData.forEach((m) => {
+            csv += `${m.roll_no},${m.student_name},${m.academic_year || ""},${
+              m.semester
+            },${m.total_obtained},${m.total_max},${m.percentage}%,${m.grade},${
+              m.status
+            }\n`;
+          });
+
+          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `all_marks_${
+            new Date().toISOString().split("T")[0]
+          }.csv`;
+          link.click();
+          URL.revokeObjectURL(link.href);
+          showToast("Download started");
+        };
+
+        return (
+          <div className="card p-6 animate-fade-in">
+            <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+              <h3 className="text-lg font-semibold">All Student Marks</h3>
+              <div className="flex items-center gap-4">
+                <select
+                  value={yearFilter}
+                  onChange={(e) => setYearFilter(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="all">All Years</option>
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={semesterFilter}
+                  onChange={(e) => setSemesterFilter(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="all">All Semesters</option>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                    <option key={s} value={`Semester ${s}`}>
+                      Semester {s}
+                    </option>
+                  ))}
+                </select>
+                <div className="relative">
+                  <svg
+                    className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="input-field pl-10"
+                    placeholder="Search..."
+                  />
+                </div>
+                <button onClick={downloadAllMarks} className="btn-success">
+                  <span className="flex items-center gap-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
+                    </svg>
+                    Export
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {filteredData.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Roll No</th>
+                      <th>Student Name</th>
+                      <th>Year</th>
+                      <th>Semester</th>
+                      <th>Subjects</th>
+                      <th>Total</th>
+                      <th>%</th>
+                      <th>Grade</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.map((m, i) => {
+                      const subjectsData = m.subjects
+                        ? JSON.parse(m.subjects)
+                        : [];
+                      return (
+                        <tr key={m.__backendId || i}>
+                          <td className="font-mono font-medium">{m.roll_no}</td>
+                          <td className="font-medium">{m.student_name}</td>
+                          <td>
+                            <span className="badge badge-info">
+                              {m.academic_year || "-"}
+                            </span>
+                          </td>
+                          <td>{m.semester}</td>
+                          <td>
+                            <div className="text-sm text-gray-600">
+                              {subjectsData
+                                .map((s) => `${s.name}: ${s.marks}`)
+                                .join(", ")}
+                            </div>
+                          </td>
+                          <td className="font-semibold">
+                            {m.total_obtained}/{m.total_max}
+                          </td>
+                          <td
+                            className={`font-bold ${
+                              m.percentage >= 40
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {m.percentage}%
+                          </td>
+                          <td>
+                            <span
+                              className={`badge ${
+                                m.grade === "F"
+                                  ? "badge-danger"
+                                  : m.grade.includes("A")
+                                  ? "badge-success"
+                                  : "badge-info"
+                              }`}
+                            >
+                              {m.grade}
+                            </span>
+                          </td>
+                          <td>
+                            {deleteConfirmId === m.__backendId ? (
+                              <div className="confirm-inline">
+                                <button
+                                  className="confirm-btn confirm-yes"
+                                  onClick={() => handleDelete(m.__backendId)}
+                                  disabled={isDeleting}
+                                >
+                                  {isDeleting ? "..." : "Yes"}
+                                </button>
+                                <button
+                                  className="confirm-btn confirm-no"
+                                  onClick={() => setDeleteConfirmId(null)}
+                                >
+                                  No
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  setDeleteConfirmId(m.__backendId)
+                                }
+                                className="text-red-500 hover:text-red-700"
+                                title="Delete"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-8">
+                No marks recorded yet
+              </p>
+            )}
+          </div>
+        );
+      };
+
+      // Main App Component
+      const App = () => {
+        const [activeSection, setActiveSection] = useState("dashboard");
+        const [marksData, setMarksData] = useState([]);
+        const [config, setConfig] = useState({
+          portal_title: "Staff Portal",
+          staff_name: "Staff Member",
+          department_name: "Marks Entry System",
+        });
+        const [toasts, setToasts] = useState([]);
+
+        const showToast = useCallback((message, type = "success") => {
+          const id = Date.now();
+          setToasts((prev) => [...prev, { id, message, type }]);
+        }, []);
+
+        const removeToast = useCallback((id) => {
+          setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, []);
+
+        useEffect(() => {
+          const initSDKs = async () => {
+            // Initialize Element SDK
+            if (window.elementSdk) {
+              await window.elementSdk.init({
+                defaultConfig: config,
+                onConfigChange: async (newConfig) => {
+                  setConfig({
+                    portal_title: newConfig.portal_title || "Staff Portal",
+                    staff_name: newConfig.staff_name || "Staff Member",
+                    department_name:
+                      newConfig.department_name || "Marks Entry System",
+                  });
+                },
+                mapToCapabilities: (cfg) => ({
+                  recolorables: [],
+                  borderables: [],
+                  fontEditable: undefined,
+                  fontSizeable: undefined,
+                }),
+                mapToEditPanelValues: (cfg) =>
+                  new Map([
+                    ["portal_title", cfg.portal_title || "Staff Portal"],
+                    ["staff_name", cfg.staff_name || "Staff Member"],
+                    [
+                      "department_name",
+                      cfg.department_name || "Marks Entry System",
+                    ],
+                  ]),
+              });
+            }
+
+            // Initialize Data SDK
+            if (window.dataSdk) {
+              const result = await window.dataSdk.init({
+                onDataChanged: (data) => {
+                  setMarksData(data.filter((d) => d.type === "marks"));
+                },
+              });
+
+              if (!result.isOk) {
+                console.error("Failed to initialize Data SDK");
+              }
+            }
+          };
+
+          initSDKs();
+        }, []);
+
+        const pageTitles = {
+          dashboard: "Dashboard",
+          students: "View Students",
+          "marks-entry": "Enter Marks",
+          "view-marks": "View Marks",
+        };
+
+        return (
+          <div className="h-full flex overflow-hidden">
+            <Sidebar
+              activeSection={activeSection}
+              setActiveSection={setActiveSection}
+              config={config}
+            />
+
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <Header title={pageTitles[activeSection]} />
+
+              <main className="flex-1 overflow-auto p-8">
+                {activeSection === "dashboard" && (
+                  <Dashboard marksData={marksData} />
+                )}
+                {activeSection === "students" && (
+                  <ViewStudents marksData={marksData} />
+                )}
+                {activeSection === "marks-entry" && (
+                  <MarksEntry marksData={marksData} showToast={showToast} />
+                )}
+                {activeSection === "view-marks" && (
+                  <ViewMarks marksData={marksData} showToast={showToast} />
+                )}
+              </main>
+            </div>
+
+            {/* Toast Container */}
+            <div id="toast-container">
+              {toasts.map((toast) => (
+                <Toast
+                  key={toast.id}
+                  message={toast.message}
+                  type={toast.type}
+                  onClose={() => removeToast(toast.id)}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      // Render App
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9b49a57416f26eef',t:'MTc2Njg0NzE5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
